@@ -1,5 +1,5 @@
 # RAFAEL RestAPI 
-This are a simple RestAPI service for the Project Rafael. This is a work in progress version, only working with the Monica database.
+This is a simple RestAPI service for the Project Rafael. This is a work in progress version, only working with the Monica database.
 
 ## How to deploy
 1. Clone the repository
