@@ -1,7 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 #from dbmodel import MainModel
 from db import connect_to_mongo
 from routes.monica import monicaRouter
+from datetime import datetime
 
 app = FastAPI(
     title="RAFAEL API",
@@ -17,4 +18,13 @@ app = FastAPI(
 )
 # actualy add routes
 app.include_router(monicaRouter, prefix="/api/v1/monica", tags=["Monica"])
+
+@app.api_route("/{path_name:path}", methods=["GET"])
+async def catch_all(request: Request, path_name: str):
+    return {
+        "request_method": request.method,
+        "path_name": path_name,
+        "message": "Hallo! Reply from RAFAEL API at " +
+        datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
+    }
 
