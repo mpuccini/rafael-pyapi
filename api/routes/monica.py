@@ -1,7 +1,7 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, status
 from db import connect_to_mongo
-from typing import List
-from datetime import datetime, tzinfo, timezone
+from typing import List, Optional
+from datetime import datetime#, tzinfo, timezone
 from models.monica import MonicaModel
 
 monicaRouter = APIRouter()
@@ -19,22 +19,46 @@ async def getOneSensor():
     result = await coll.find_one({},{'_id': 0})
     return result
 
-@monicaRouter.get("/all", response_model=List[MonicaModel])
-async def getAllSensors():
-    '''**Get all sensors**
+# @monicaRouter.get("/all", 
+#                     status_code=status.HTTP_200_OK, 
+#                     #response_model=List[MonicaModel]
+#                 )
+# async def getAllSensors(
+#                     page_size: Optional[int] = 2,
+#                     page_number: Optional[int] = 1
+#                 ):
+#     '''**Get all sensors**
         
-    - **Returns**:
-        - list: *list of sensors.*
-    '''
-    conn = await connect_to_mongo()
-    coll = conn[collection]
-    result = await coll.find({},{'_id': 0}).limit(10).to_list(None)
-    return result
+#     - **Returns**:
+#         - list: *list of sensors.*
+#     '''
+
+#     conn = await connect_to_mongo()
+#     coll = conn[collection]
+#     n_docs = await coll.count_documents({})
+#     skip = page_size * (page_number - 1)
+#     if page_size > n_docs:
+#         page_tot = 1
+#     else:
+#         page_tot = (n_docs // page_size) + (n_docs - page_size) if n_docs > 0 else 0
+#     result = await coll.find({},{'_id': 0}, page_size, skip).to_list(None)
+#     return {
+#         "skip": skip,
+#         "page_size": page_size,
+#         "page_number": page_number,
+#         "page_tot": page_tot,
+#         "number_docs": n_docs,
+#         "data": result,
+#     }
 
 
 
-@monicaRouter.get("/all/{start_date}:{end_date}", response_model=List[MonicaModel])
-async def getAllSensorsByDateRange(start_date: str, end_date: str):
+
+@monicaRouter.get("/dateRange/", response_model=List[MonicaModel])
+async def getAllSensorsByDateRange(
+                                    start: str = "2022-02-23", 
+                                    end: str = "2022-03-23"
+                                ):
     '''**Get all sensors by date range**
     
     - **Note**: 
@@ -44,22 +68,22 @@ async def getAllSensorsByDateRange(start_date: str, end_date: str):
         - Insert date as YYYY-MM-DD.
     
     - **Args**:
-        - start_date (str): *start date*. 
-        - end_date (str): *end date*. 
+        - start (str): *start date*. 
+        - end (str): *end date*. 
         
     - **Returns**:
         - list: *list of sensors.*
     '''
-    sd = datetime.strptime(start_date, '%Y-%m-%d')
-    ed = datetime.strptime(end_date, '%Y-%m-%d')
+    s = datetime.strptime(start, '%Y-%m-%d')
+    e = datetime.strptime(end, '%Y-%m-%d')
     conn = await connect_to_mongo()
     coll = conn[collection]
     pipeline = [
         {
             "$match": {
                 "Date": {
-                    "$gte": sd,
-                    "$lt": ed
+                    "$gte": s,
+                    "$lt": e
                 }
             }
         }
@@ -109,4 +133,68 @@ async def getSensorsByID(sensor_id: str):
     return result
 
 
+
+@monicaRouter.get("/getMainData/")
+async def getMainData(
+    start: str = "2022-02-23",
+    end: str = "2022-03-23",
+):
+    '''**Get sensor Main data by Time Range**
+    
+    - **Note**: get only the main data for all sensors in the time range. In particular, it returns:
+        - "temp": temperature in °C
+        - "hum": humidity in %
+        - "CO": Carbon Monoxide in ppm
+        - "NO2": Nitrogen Dioxide in ppm
+        - "O3": Ozone in ppm
+        - "PM10": Particulate Matter 10 in µg/m3
+        - "PM2_5": Particulate Matter 2.5 in µg/m3
+        - "t": date and time of the sample
+    
+    - **Args**:
+        - start (str): *start date*.
+        - end (str): *end date*.
+    
+    - **Returns**:
+        - list: *list of sensors IDs and count.*
+    '''
+    s = datetime.strptime(start, '%Y-%m-%d')
+    e = datetime.strptime(end, '%Y-%m-%d')
+    conn = await connect_to_mongo()
+    coll = conn[collection]
+    pipeline = [
+    {
+        '$match': {
+            'Date': {
+                '$gte': s, 
+                '$lt': e
+            }
+        }
+    }, {
+        '$project': {
+            'Date': 1, 
+            'ID_AFE': 1, 
+            'samples.t': 1, 
+            'samples.data.temp': 1, 
+            'samples.data.hum': 1, 
+            'samples.data.CO': 1, 
+            'samples.data.NO2': 1, 
+            'samples.data.O3': 1, 
+            'samples.data.PM10': 1, 
+            'samples.data.PM2_5': 1
+        }
+    }, {
+        '$group': {
+            '_id': None, 
+            'dates': {
+                '$addToSet': '$Date'
+            }, 
+            'mainData': {
+                '$addToSet': '$samples'
+            }
+        }
+    }
+]
+    result = await coll.aggregate(pipeline).to_list(None)
+    return result
 
