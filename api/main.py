@@ -1,7 +1,9 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Depends
+from fastapi.security import OAuth2PasswordBearer
 #from dbmodel import MainModel
 from db import connect_to_mongo
 from routes.monica import monicaRouter
+from routes.auth import authRouter
 from datetime import datetime
 
 app = FastAPI(
@@ -16,8 +18,12 @@ app = FastAPI(
     },
     license_info={"name": "MIT", "url": "https://mit-license.org/"},
 )
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
 # actualy add routes
-app.include_router(monicaRouter, prefix="/api/v1/monica", tags=["Monica"])
+app.include_router(authRouter)
+app.include_router(monicaRouter)
 
 @app.api_route("/{path_name:path}", methods=["GET"])
 async def catch_all(request: Request, path_name: str):

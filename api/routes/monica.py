@@ -1,10 +1,17 @@
-from fastapi import APIRouter, status
+from fastapi import APIRouter, Depends
 from db import connect_to_mongo
-from typing import List, Optional
+from typing import List#, Optional
 from datetime import datetime#, tzinfo, timezone
 from models.monica import MonicaModel
+from .auth import get_current_active_user
 
-monicaRouter = APIRouter()
+monicaRouter = APIRouter(
+    prefix="/api/v1/monica",
+    tags=["Monica"],
+    dependencies=[Depends(get_current_active_user)],
+)
+
+
 collection = 'monica'
 
 @monicaRouter.get("/one", response_model=MonicaModel)
