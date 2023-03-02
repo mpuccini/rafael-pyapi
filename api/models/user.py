@@ -6,3 +6,6 @@ class User(BaseModel):
     full_name: str | None = None
     organization: str | None = None
     disabled: bool | None = None
+    
+class UserInDB(User):
+    hashed_password: str
