@@ -7,7 +7,7 @@ from models.monica import MonicaModel
 
 
 router = APIRouter(
-    prefix="/api/v1/monica",
+    prefix="/api/monica",
     tags=["Monica"]
 )
 

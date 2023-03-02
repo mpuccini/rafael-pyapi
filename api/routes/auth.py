@@ -8,7 +8,7 @@ from db import connect_to_mongo
 
 
 router = APIRouter(
-    prefix="/api/v1/auth",
+    prefix="/auth",
     tags=["Auth"]
 )
 
@@ -22,7 +22,6 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     user_dict = await coll.find_one({"username": form_data.username},{'_id': 0})
     if not user_dict:
         raise HTTPException(status_code=401, detail="Incorrect username or password")
-    print(user_dict)
     user = UserInDB(**user_dict)
     hashed_password = fake_hash_password(form_data.password)
     if not hashed_password == user.hashed_password:

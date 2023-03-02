@@ -22,7 +22,7 @@ fake_users_db = {
 
 users_coll = "users"
     
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
 
 
 def fake_hash_password(password: str):
@@ -39,6 +39,7 @@ def fake_decode_token(token):
     # This doesn't provide any security at all
     # Check the next version
     user = get_user(users_coll, token)
+    print(user)
     return user
 
 async def get_current_user(token: str = Depends(oauth2_scheme)):
