@@ -39,11 +39,10 @@ def fake_decode_token(token):
     # This doesn't provide any security at all
     # Check the next version
     user = get_user(users_coll, token)
-    print(user)
     return user
 
 async def get_current_user(token: str = Depends(oauth2_scheme)):
-    user = fake_decode_token(token)
+    user = await fake_decode_token(token)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
