@@ -57,8 +57,8 @@ and play in your browser with the examples.
 - [ ] Add more endpoints for Monica
 - [ ] Add endpoints for other sensors (e.g. ANAS)
 - [X] Add user authentication?
-- [X] Add a dev mongo instance to the docker-compose file
-- [X] Add js scripts to populate the dev database with fake users and documents
+- [-] Add a dev mongo instance to the docker-compose file (still need to be tested)
+- [-] Add js scripts to populate the dev database with fake users and documents (still need to be tested)
 - [ ] Write tests
 
 

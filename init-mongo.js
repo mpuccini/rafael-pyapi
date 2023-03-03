@@ -78,8 +78,8 @@ db.createUser(
       }
     ]
   }
-)
+);
 
 db.monica.insert(
   fakeDoc
-)
+);
