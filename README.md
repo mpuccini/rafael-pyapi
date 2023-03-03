@@ -27,22 +27,39 @@ If you need to stop the service, you can use `docker compose down`.
 
 
 ## How to use
-You can look at the available endpoints in the Swagger documentation at the /docs endpoint. Once you have the service running, you can access it at http://localhost:8080/docs. You can use http methods to access the endpoints, for instance, to get one single document as a sample of the data, you can use the following command:
+You can look at the available endpoints in the Swagger documentation at the /docs endpoint. Once you have the service running, you can access it at http://localhost:8080/docs to test all available routes. You may try the API with `curl`. First of all you need to authenticate with your credentials:
+```bash
+curl -X 'POST' \
+  'http://localhost:8000/auth/token' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/x-www-form-urlencoded' \
+  -d 'grant_type=&username=<YOUR_USERNAME>&password=<YOUR_PASSWORD>&scope=&client_id=&client_secret='
+```
+The response is a JSON with yout access token. You can use it to access the endpoints. For instance, to get one single document as a sample of the data, you can use the following command:
 
 ```bash
-curl -X GET "http://localhost:8000/api/monica/one" 
+curl -X 'GET' \
+  'http://localhost:8000/api/monica/one' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer <YOUR_ACCESS_TOKEN>'
 ```
-Or, if you want data from a specific date range, you can use the following command:
 
+## Jupyter Notebook example
+
+In the `example_notebook` folder you can find a Jupyter Notebook with some examples of how to use the API. You can run it with the following command:
 ```bash
-curl -X GET "http://localhost:8000/api/monica/dateRange/?start=2022-02-23&end=2022-02-24" 
+jupyter notebook notebooks/RAFAEL_API_Example.ipynb
 ```
+and play in your browser with the examples.
 
 
 ## TODO
 - [ ] Add more endpoints for Monica
 - [ ] Add endpoints for other sensors (e.g. ANAS)
-- [ ] Add user authentication?
+- [X] Add user authentication?
+- [X] Add a dev mongo instance to the docker-compose file
+- [X] Add js scripts to populate the dev database with fake users and documents
+- [ ] Write tests
 
 
 

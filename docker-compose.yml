@@ -2,8 +2,27 @@ version: "3.9"
 services:
   api:
     build: .
-    env_file: .env.prod
+    env_file: .env.dev
     restart: always
+    container_name: 'rafael-api'
     ports:
       - "8000:8000"
     command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    network_mode: "host"
+  database:
+    image: 'mongo'
+    env_file: .env.dev
+    restart: always
+    container_name: 'rafael-mongo'
+    environment:
+      - MONGO_INITDB_DATABASE=${MONGO_DB}
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASS}
+    volumes:
+      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+      - mongo-volume:/data/db
+    ports:
+      - '27017-27019:27017-27019'
+    network_mode: "host"
+volumes:
+  mongo-volume:
