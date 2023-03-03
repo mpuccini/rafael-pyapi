@@ -1,5 +1,6 @@
 import datetime
 from pydantic import BaseModel
+from typing import List
 
 class LocationModel(BaseModel):
     type: str
@@ -56,3 +57,21 @@ class MonicaModel(BaseModel):
     lbl_location: str
     location: LocationModel
     samples: list[DataModel]
+    
+class MainDataModel(BaseModel):
+    temp: float
+    hum: float
+    CO: float
+    NO2: float
+    O3: float
+    PM10: float
+    PM2_5: float
+    
+class MainSampleModel(BaseModel):
+    t: datetime.datetime
+    data: MainDataModel
+    
+class ResponseMainModel(BaseModel):
+    Dates: list[datetime.date]
+    # ID_AFE: str
+    Samples: list[list[MainSampleModel]]

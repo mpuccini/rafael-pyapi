@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from db import connect_to_mongo
 from typing import List#, Optional
 from datetime import datetime#, tzinfo, timezone
-from models.monica import MonicaModel
+from models.monica import MonicaModel, ResponseMainModel
 
 
 
@@ -108,7 +108,7 @@ async def getSensorsByID(sensor_id: str):
 
 
 
-@router.get("/getMainData/")
+@router.get("/getMainData/", response_model=List[ResponseMainModel])
 async def getMainData(
     start: str = "2022-02-23",
     end: str = "2022-03-23",
@@ -157,13 +157,14 @@ async def getMainData(
             'samples.data.PM10': 1, 
             'samples.data.PM2_5': 1
         }
-    }, {
+    }, 
+    {
         '$group': {
             '_id': None, 
-            'dates': {
+            'Dates': {
                 '$addToSet': '$Date'
             }, 
-            'mainData': {
+            'Samples': {
                 '$addToSet': '$samples'
             }
         }
