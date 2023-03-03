@@ -30,12 +30,12 @@ If you need to stop the service, you can use `docker compose down`.
 You can look at the available endpoints in the Swagger documentation at the /docs endpoint. Once you have the service running, you can access it at http://localhost:8080/docs. You can use http methods to access the endpoints, for instance, to get one single document as a sample of the data, you can use the following command:
 
 ```bash
-curl -X GET "http://localhost:8000/api/v1/monica/one" 
+curl -X GET "http://localhost:8000/api/monica/one" 
 ```
 Or, if you want data from a specific date range, you can use the following command:
 
 ```bash
-curl -X GET "http://localhost:8000/api/v1/monica/dateRange/?start=2022-02-23&end=2022-02-24" 
+curl -X GET "http://localhost:8000/api/monica/dateRange/?start=2022-02-23&end=2022-02-24" 
 ```
 
 

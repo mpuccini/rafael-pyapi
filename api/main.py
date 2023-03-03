@@ -9,7 +9,7 @@ import auth_utils
 app = FastAPI(
     title="RAFAEL API",
     description="RESTful API for RAFAEL project",
-    version="0.1.0",
+    version="0.2.0",
     terms_of_service="",
     contact={
         "name": "RAFAEL API info",
