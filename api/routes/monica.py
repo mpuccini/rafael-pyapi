@@ -1,13 +1,20 @@
-from fastapi import APIRouter, status
+from fastapi import APIRouter, Depends
 from db import connect_to_mongo
-from typing import List, Optional
+from typing import List#, Optional
 from datetime import datetime#, tzinfo, timezone
-from models.monica import MonicaModel
+from models.monica import MonicaModel, ResponseMainModel
 
-monicaRouter = APIRouter()
+
+
+router = APIRouter(
+    prefix="/api/monica",
+    tags=["Monica"]
+)
+
+
 collection = 'monica'
 
-@monicaRouter.get("/one", response_model=MonicaModel)
+@router.get("/one", response_model=MonicaModel)
 async def getOneSensor():
     '''**Get one sensor**
         
@@ -19,42 +26,9 @@ async def getOneSensor():
     result = await coll.find_one({},{'_id': 0})
     return result
 
-# @monicaRouter.get("/all", 
-#                     status_code=status.HTTP_200_OK, 
-#                     #response_model=List[MonicaModel]
-#                 )
-# async def getAllSensors(
-#                     page_size: Optional[int] = 2,
-#                     page_number: Optional[int] = 1
-#                 ):
-#     '''**Get all sensors**
-        
-#     - **Returns**:
-#         - list: *list of sensors.*
-#     '''
-
-#     conn = await connect_to_mongo()
-#     coll = conn[collection]
-#     n_docs = await coll.count_documents({})
-#     skip = page_size * (page_number - 1)
-#     if page_size > n_docs:
-#         page_tot = 1
-#     else:
-#         page_tot = (n_docs // page_size) + (n_docs - page_size) if n_docs > 0 else 0
-#     result = await coll.find({},{'_id': 0}, page_size, skip).to_list(None)
-#     return {
-#         "skip": skip,
-#         "page_size": page_size,
-#         "page_number": page_number,
-#         "page_tot": page_tot,
-#         "number_docs": n_docs,
-#         "data": result,
-#     }
 
 
-
-
-@monicaRouter.get("/dateRange/", response_model=List[MonicaModel])
+@router.get("/dateRange/", response_model=List[MonicaModel])
 async def getAllSensorsByDateRange(
                                     start: str = "2022-02-23", 
                                     end: str = "2022-03-23"
@@ -93,7 +67,7 @@ async def getAllSensorsByDateRange(
 
 
 
-@monicaRouter.get("/sensorIDcount")
+@router.get("/sensorIDcount")
 async def getSensorIDCount():
     '''**Get sensor IDs and count**
     
@@ -117,7 +91,7 @@ async def getSensorIDCount():
 
 
 
-@monicaRouter.get("/{sensor_id}")
+@router.get("/{sensor_id}")
 async def getSensorsByID(sensor_id: str):
     '''**Get sensor by ID**
     
@@ -134,7 +108,7 @@ async def getSensorsByID(sensor_id: str):
 
 
 
-@monicaRouter.get("/getMainData/")
+@router.get("/getMainData/", response_model=List[ResponseMainModel])
 async def getMainData(
     start: str = "2022-02-23",
     end: str = "2022-03-23",
@@ -183,13 +157,14 @@ async def getMainData(
             'samples.data.PM10': 1, 
             'samples.data.PM2_5': 1
         }
-    }, {
+    }, 
+    {
         '$group': {
             '_id': None, 
-            'dates': {
+            'Dates': {
                 '$addToSet': '$Date'
             }, 
-            'mainData': {
+            'Samples': {
                 '$addToSet': '$samples'
             }
         }

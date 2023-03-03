@@ -13,4 +13,4 @@ class Config(object):
     def mongo_db(self):
         return os.getenv('MONGO_DB')
 
-print(Config().mongo_uri())
+#print(Config().mongo_uri())
