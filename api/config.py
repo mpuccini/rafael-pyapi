@@ -12,5 +12,13 @@ class Config(object):
     
     def mongo_db(self):
         return os.getenv('MONGO_DB')
-
-#print(Config().mongo_uri())
+    
+    def security_key(self):
+        return os.getenv('SECRET_KEY')
+    
+    def algorithm(self):
+        return os.getenv('ALGORITHM')
+    
+    def access_token_expire_minutes(self):
+        return os.getenv('ACCESS_TOKEN_EXPIRE_MINUTES')
+        
