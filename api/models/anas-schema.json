@@ -1,0 +1,171 @@
+{
+  "title": "MainModel",
+  "type": "object",
+  "properties": {
+    "t": {
+      "title": "T",
+      "type": "string",
+      "format": "date-time"
+    },
+    "filename": {
+      "title": "Filename",
+      "type": "string"
+    },
+    "checksum": {
+      "title": "Checksum",
+      "type": "string"
+    },
+    "data": {
+      "$ref": "#/definitions/DataModel"
+    }
+  },
+  "required": [
+    "t",
+    "filename",
+    "checksum",
+    "data"
+  ],
+  "definitions": {
+    "SamplingModel": {
+      "title": "SamplingModel",
+      "type": "object",
+      "properties": {
+        "rate": {
+          "title": "Rate",
+          "type": "number"
+        },
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rate",
+        "unit"
+      ]
+    },
+    "ChannelModel": {
+      "title": "ChannelModel",
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "unit"
+      ]
+    },
+    "ProducerModel": {
+      "title": "ProducerModel",
+      "type": "object",
+      "properties": {
+        "institution": {
+          "title": "Institution",
+          "type": "string"
+        },
+        "reference": {
+          "title": "Reference",
+          "type": "string"
+        }
+      },
+      "required": [
+        "institution",
+        "reference"
+      ]
+    },
+    "LocationModel": {
+      "title": "LocationModel",
+      "type": "object",
+      "properties": {
+        "type": {
+          "title": "Type",
+          "type": "string"
+        },
+        "coordinates": {
+          "title": "Coordinates",
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        }
+      },
+      "required": [
+        "type",
+        "coordinates"
+      ]
+    },
+    "SensorModel": {
+      "title": "SensorModel",
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "type": {
+          "title": "Type",
+          "type": "string"
+        },
+        "model": {
+          "title": "Model",
+          "type": "string"
+        },
+        "sampling": {
+          "$ref": "#/definitions/SamplingModel"
+        },
+        "channels": {
+          "title": "Channels",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ChannelModel"
+          }
+        },
+        "producer": {
+          "$ref": "#/definitions/ProducerModel"
+        },
+        "location": {
+          "$ref": "#/definitions/LocationModel"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "model",
+        "sampling",
+        "channels",
+        "producer",
+        "location"
+      ]
+    },
+    "DataModel": {
+      "title": "DataModel",
+      "type": "object",
+      "properties": {
+        "day": {
+          "title": "Day",
+          "type": "string",
+          "format": "date"
+        },
+        "sensor": {
+          "$ref": "#/definitions/SensorModel"
+        }
+      },
+      "required": [
+        "day",
+        "sensor"
+      ]
+    }
+  }
+}
