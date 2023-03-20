@@ -4,8 +4,4 @@ __pycache__
 .vscode
 .DS_Store
 .ipynb_checkpoints
-<<<<<<< HEAD
 rafael-api.yaml
-=======
-rafael-api-yaml
->>>>>>> 959e185f7c2c138e3bb78a7d426464ab52fcc464
