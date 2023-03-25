@@ -1,41 +1,33 @@
-import datetime
 from pydantic import BaseModel
+from typing import Optional
+import datetime 
 
+class DeltaT(BaseModel):
+    value: float
+    uom: str="s"
 
-class LocationModel(BaseModel):
-    type: str
+class Sample(BaseModel):
+    time: datetime.datetime
+    rate: DeltaT
+    stats: dict
+    filename: str
+    extension: str
+    checksum: str
+
+class Location(BaseModel):
+    type: str="Point"
     coordinates: list[float]
 
-class ProducerModel(BaseModel):
-    institution: str
-    reference: str
-
-class ChannelModel(BaseModel):
-    id: str
+class Cabin(BaseModel):
     name: str
-    unit: str
+    location: Location
 
-class SamplingModel(BaseModel):
-    rate: float
-    unit: str
-
-class SensorModel(BaseModel):
-    id: str
-    type: str
-    model: str
-    sampling: SamplingModel
-    channels: list[ChannelModel]
-    producer: ProducerModel
-    location: LocationModel
+class Producer(BaseModel):
+    institution: str
+    reference: Optional[str] = None
     
-class DataModel(BaseModel):
-    day: datetime.date
-    sensor: SensorModel
-
-class MainModel(BaseModel):
-    t: datetime.datetime
-    filename: str
-    checksum: str
-    data: DataModel
-    
-print(MainModel.schema_json(indent=2))
+class ANASModel(BaseModel):
+    date: datetime.datetime
+    cabin: Cabin
+    producer: Producer
+    samples: list[Sample]

@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request, Depends
 #from dbmodel import MainModel
 #from db import connect_to_mongo
 from routes.monica import router as monica_router
+from routes.anas import router as anas_router
 from routes.auth import router as auth_router
 #from datetime import datetime
 import auth_utils
@@ -25,5 +26,8 @@ app = FastAPI(
 # actualy add routes
 app.include_router(auth_router)
 app.include_router(monica_router, 
+                    dependencies=[Depends(auth_utils.get_current_active_user)]
+                )
+app.include_router(anas_router, 
                     dependencies=[Depends(auth_utils.get_current_active_user)]
                 )
