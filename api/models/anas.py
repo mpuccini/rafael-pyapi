@@ -6,10 +6,15 @@ class DeltaT(BaseModel):
     value: float
     uom: str="s"
 
+class Stats(BaseModel):
+    accSTATS: dict
+    inclSTATS: dict
+    strainSTATS: dict
+
 class Sample(BaseModel):
     time: datetime.datetime
     rate: DeltaT
-    stats: dict
+    stats: Stats
     filename: str
     extension: str
     checksum: str

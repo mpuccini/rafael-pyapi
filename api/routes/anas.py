@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter#, Depends
 from db import connect_to_mongo
 from typing import List#, Optional
-from datetime import datetime#, tzinfo, timezone
+from datetime import datetime
 from models.anas import ANASModel
 
 
@@ -104,14 +104,14 @@ async def getCabinCount():
 #     return result
 
 
-
-@router.get("/var/dateRange/")
-async def getVarByDateRange(
-                                    var: str = "ACC_EX_1", 
+@router.get("/strainSTATS/dateRange/")
+async def getStrainStatsByDateRange(
+                                    strain: str = "STRAIN_A2", 
+                                    val: str = "mean",
                                     start: str = "2022-01-05", 
                                     end: str = "2022-01-06"
                                 ):
-    '''**Get mean and std values for selected variable by date range**
+    '''**Get max, min or mean values for selected strain gauge by date range**
     
     - **Note**: 
         - Remembering that in python the end element is not included in a range:
@@ -120,7 +120,8 @@ async def getVarByDateRange(
         - Insert date as YYYY-MM-DD.
     
     - **Args**:
-        - var (str): *variable name*. 
+        - incl (str): *strain gauge name*. 
+        - val (str): *value to be returned*.
         - start (str): *start date*. 
         - end (str): *end date*. 
         
@@ -142,8 +143,7 @@ async def getVarByDateRange(
     }, {
         '$project': {
             'date': 1, 
-            'meanValues': '$samples.stats.'+var+'.mean', 
-            'stdValues': '$samples.stats.'+var+'.std'
+            'Values': '$samples.stats.strainSTATS.' + val + '.' + strain
         }
     }, {
         '$group': {
@@ -151,11 +151,8 @@ async def getVarByDateRange(
             'date': {
                 '$addToSet': '$date'
             }, 
-            'meanVaules': {
-                '$addToSet': '$meanValues'
-            }, 
-            'stdVaules': {
-                '$addToSet': '$stdValues'
+            'Vaules': {
+                '$addToSet': '$Values'
             }
         }
     }
@@ -164,3 +161,35 @@ async def getVarByDateRange(
     return result
 
 
+@router.get("/allFilesByDate/")
+async def getAllFilesByDate( 
+                                    date: str = "2022-01-05"
+                                ):
+    '''**Get all files checksum for selected date**
+    
+    - **Args**:
+        - date (str): *date*. 
+        
+    - **Returns**:
+        - list: *list of checsums.*
+    '''
+    date = datetime.strptime(date, '%Y-%m-%d')
+
+    conn = await connect_to_mongo()
+    coll = conn[collection]
+    pipeline = [
+    {
+        '$match': {
+            'date': date
+        }
+    }, {
+        '$project': {
+            '_id': 0,
+            'date': 1, 
+            'files': '$samples.checksum'
+        }
+    }
+]   
+
+    result = await coll.aggregate(pipeline).to_list(None)
+    return result
