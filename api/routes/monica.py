@@ -91,8 +91,8 @@ async def getSensorIDCount():
 
 
 
-@router.get("/{sensor_id}")
-async def getSensorsByID(sensor_id: str):
+@router.get("/sensorID/")
+async def getSensorsByID(id: str):
     '''**Get sensor by ID**
     
     - **Args**:
@@ -103,7 +103,7 @@ async def getSensorsByID(sensor_id: str):
     '''
     conn = await connect_to_mongo()
     coll = conn[collection]
-    result = await coll.find({"ID_AFE": sensor_id}, {'_id': 0}).limit(5).to_list(None)
+    result = await coll.find({"ID_AFE": id}, {'_id': 0}).limit(5).to_list(None)
     return result
 
 
