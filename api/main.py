@@ -1,10 +1,7 @@
-from fastapi import FastAPI, Request, Depends
-#from dbmodel import MainModel
-#from db import connect_to_mongo
+from fastapi import FastAPI, Depends
 from routes.monica import router as monica_router
 from routes.anas import router as anas_router
 from routes.auth import router as auth_router
-#from datetime import datetime
 import auth_utils
 
 app = FastAPI(

@@ -1,6 +1,6 @@
-from fastapi import APIRouter#, Depends
+from fastapi import APIRouter
 from db import connect_to_mongo
-from typing import List#, Optional
+from typing import List
 from datetime import datetime
 from models.anas import ANASModel
 
